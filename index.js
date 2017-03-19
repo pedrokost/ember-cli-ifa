@@ -50,14 +50,18 @@ module.exports = {
       assetMapContent = `"${fingerprintPrepend + 'assets/' + assetFileName}"`;
     }
 
-    fs.writeFileSync(indexFilePath, indexFile.replace(/__asset_map_placeholder__/, assetMapContent));
+    fs.writeFileSync(indexFilePath, indexFile.replace(/__asset_map_placeholder__/g, assetMapContent));
 
     if (testIndexFile) {
-      fs.writeFileSync(testIndexFilePath, testIndexFile.replace(/__asset_map_placeholder__/, assetMapContent));
+      fs.writeFileSync(testIndexFilePath, testIndexFile.replace(/__asset_map_placeholder__/g, assetMapContent));
     }
   },
 
   contentFor(type, config) {
+    if (type === 'head' && config.ifa && config.ifa.enabled) {
+      return '<link src=__asset_map_placeholder__ preload>';
+    }
+
     if (type === 'head-footer' && config.ifa && config.ifa.enabled) {
       return '<script>var __assetMapFilename__ = __asset_map_placeholder__;</script>';
     }
